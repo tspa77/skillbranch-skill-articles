@@ -32,7 +32,6 @@ object LocalDataHolder {
             )
         }
         return articleData
-
     }
 
     fun findArticlePersonalInfo(articleId: String): LiveData<ArticlePersonalInfo?> {
@@ -44,6 +43,7 @@ object LocalDataHolder {
     }
 
     fun getAppSettings() = settings
+
     fun updateAppSettings(appSettings: AppSettings) {
         settings.value = appSettings
     }
