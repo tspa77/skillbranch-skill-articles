@@ -1,26 +1,26 @@
 package ru.skillbranch.skillarticles.viewmodels
 
-import androidx.lifecycle.LiveData
-import ru.skillbranch.skillarticles.data.ArticleData
-import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
+import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
 
 class ArticleViewModel(articleId: String) : BaseViewModel<ArticleState>(ArticleState()) {
+    private val repository = ArticleRepository
+
 
     init {
         // TODO
     }
 
-    fun getArticleContent(): LiveData<List<Any>?> {
-
-    }
-
-    fun getArticleData(): LiveData<ArticleData?> {
-
-    }
-
-    fun getArticlePersonalInfo(): LiveData<ArticlePersonalInfo?> {
-
-    }
+//    fun getArticleContent(): LiveData<List<Any>?> {
+//
+//    }
+//
+//    fun getArticleData(): LiveData<ArticleData?> {
+//
+//    }
+//
+//    fun getArticlePersonalInfo(): LiveData<ArticlePersonalInfo?> {
+//
+//    }
 
     fun handleNightMode() {
     }
@@ -32,6 +32,9 @@ class ArticleViewModel(articleId: String) : BaseViewModel<ArticleState>(ArticleS
     }
 
     fun handleBookmark() {
+    }
+
+    fun handleLike() {
     }
 
     fun handleShare() {
