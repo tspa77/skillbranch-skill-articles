@@ -76,7 +76,6 @@ abstract class BaseViewModel<T>(initState: T) : ViewModel() {
             state.value = onChanged(it, currentState) ?: return@addSource
         }
     }
-
 }
 
 class ViewModelFactory(private val params: String) : ViewModelProvider.Factory {
