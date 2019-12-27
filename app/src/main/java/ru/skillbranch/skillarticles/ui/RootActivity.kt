@@ -2,9 +2,9 @@ package ru.skillbranch.skillarticles.ui
 
 import android.os.Bundle
 import android.widget.ImageView
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
@@ -86,9 +86,9 @@ class RootActivity : AppCompatActivity() {
         logo?.scaleType = ImageView.ScaleType.CENTER_CROP
         val lp = logo?.layoutParams as? Toolbar.LayoutParams
         lp?.let {
-            it.width = this.dpToIntPx(4)
-            it.height = this.dpToIntPx(4)
-            it.marginEnd = this.dpToIntPx(160) // Отступ от вью до тайтла
+            it.width = this.dpToIntPx(40)
+            it.height = this.dpToIntPx(40)
+            it.marginEnd = this.dpToIntPx(16) // Отступ от вью до тайтла
             logo.layoutParams = it
         }
     }
