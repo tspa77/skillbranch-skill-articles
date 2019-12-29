@@ -5,6 +5,7 @@ import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
 import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
 import ru.skillbranch.skillarticles.extensions.data.toAppSettings
+import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
 
 class ArticleViewModel(private val articleId: String) :
@@ -86,9 +87,27 @@ class ArticleViewModel(private val articleId: String) :
     }
 
     fun handleLike() {
+        val toggleLike = {
+            val info = currentState.toArticlePersonalInfo()
+            repository.updateArticlePersonalInfo(info.copy(isLike = !info.isLike))
+        }
+
+        toggleLike()
+
+        val msg = if (currentState.isLike) Notify.TextMessage("Mark is liked")
+        else {
+            Notify.ActionMessage(
+                "Don't like anymore", // message
+                "No, still like it", // action label on snackbar
+                toggleLike // hundler function, if press "No, still like it" on snackbar, then toggle again
+            )
+        }
+        notify(msg)
     }
 
     fun handleShare() {
+        val msg = "Share is not implemented"
+        notify(Notify.ErrorMessage(msg, "Ok", null))
     }
 
     fun handleToggleMenu() {
