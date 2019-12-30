@@ -91,8 +91,8 @@ class RootActivity : AppCompatActivity() {
 
         //bind submenu views
         switch_mode.isChecked = data.isDarkMode
-
-        if (data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        delegate.localNightMode =
+            if (data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
 
         if (data.isBigText) {
             tv_text_content.textSize = 18f
