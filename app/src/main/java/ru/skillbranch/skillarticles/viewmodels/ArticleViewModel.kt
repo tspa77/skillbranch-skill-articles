@@ -90,7 +90,7 @@ class ArticleViewModel(private val articleId: String) :
 
         toggleBookmark()
 
-        val msg = if (currentState.isBookmark) Notify.TextMessage("Add to bookmark")
+        val msg = if (currentState.isBookmark) Notify.TextMessage("Add to bookmarks")
         else Notify.TextMessage("Remove from bookmarks")
         notify(msg)
     }
@@ -106,7 +106,7 @@ class ArticleViewModel(private val articleId: String) :
         val msg = if (currentState.isLike) Notify.TextMessage("Mark is liked")
         else {
             Notify.ActionMessage(
-                "Don't like anymore", // message
+                "Don`t like it anymore", // message
                 "No, still like it", // action label on snackbar
                 toggleLike // hundler function, if press "No, still like it" on snackbar, then toggle again
             )
@@ -116,7 +116,7 @@ class ArticleViewModel(private val articleId: String) :
 
     override fun handleShare() {
         val msg = "Share is not implemented"
-        notify(Notify.ErrorMessage(msg, "Ok", null))
+        notify(Notify.ErrorMessage(msg, "OK", null))
     }
 
     override fun handleToggleMenu() {
