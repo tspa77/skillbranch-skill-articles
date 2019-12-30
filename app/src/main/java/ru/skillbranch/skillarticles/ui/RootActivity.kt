@@ -93,6 +93,7 @@ class RootActivity : AppCompatActivity() {
         switch_mode.isChecked = data.isDarkMode
 
         if (data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+
         if (data.isBigText) {
             tv_text_content.textSize = 18f
             btn_text_up.isChecked = true
@@ -106,6 +107,7 @@ class RootActivity : AppCompatActivity() {
         //bind content
         tv_text_content.text =
             if (data.isLoadingContent) "loading" else data.content.first() as String
+
         //bind toolbar
         toolbar.title = data.title ?: "loading"
         toolbar.subtitle = data.category ?: "loading"
