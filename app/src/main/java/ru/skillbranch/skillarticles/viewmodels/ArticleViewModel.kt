@@ -122,10 +122,12 @@ class ArticleViewModel(private val articleId: String) :
     }
 
     override fun handleSearchMode(isSearch: Boolean) {
+        updateState { it.copy(isSearch = isSearch) }
     }
 
 
     override fun handleSearch(query: String?) {
+        updateState { it.copy(searchQuery = query) }
     }
 }
 
@@ -139,7 +141,7 @@ data class ArticleState(
     val isBigText: Boolean = false, //шрифт увеличен
     val isDarkMode: Boolean = false, //темный режим
     val isSearch: Boolean = false, //режим поиска
-    val searchQuery: String? = null, // поисковы запрос
+    val searchQuery: String? = null, // поисковый запрос
     val searchResults: List<Pair<Int, Int>> = emptyList(), //результаты поиска (стартовая и конечная позиции)
     val searchPosition: Int = 0, //текущая позиция найденного результата
     val shareLink: String? = null, //ссылка Share

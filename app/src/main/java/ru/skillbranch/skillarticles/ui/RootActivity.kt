@@ -2,6 +2,9 @@ package ru.skillbranch.skillarticles.ui
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -42,9 +45,42 @@ class RootActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
-        val searchItem = menu?.findItem(R.id.action_search)
-        val searchView = searchItem?.actionView as SearchView
-        searchView.queryHint = "Search"
+        // https://stackoverflow.com/questions/55537368/filter-for-searchview-in-kotlin
+        with(menu!!.findItem(R.id.action_search)) {
+            setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                    viewModel.handleSearchMode(true)
+                    hideLogo()
+                    return true
+                }
+
+                override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                    viewModel.handleSearchMode(false)
+                    showLogo()
+                    return true
+                }
+            })
+            if (viewModel.currentState.isSearch) expandActionView() // Если был режим поиска - восстановим
+        }
+
+        with(menu.findItem(R.id.action_search).actionView as SearchView) {
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    viewModel.handleSearch(query)
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    viewModel.handleSearch(newText)
+                    return true
+                }
+            })
+            maxWidth = 9999
+            if (viewModel.currentState.isSearch) setQuery(
+                viewModel.currentState.searchQuery,
+                false
+            ) // Если был режим поиска - восстановим
+        }
 
 
         return super.onCreateOptionsMenu(menu)
@@ -130,7 +166,7 @@ class RootActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         // проверяем что тулбаер есть и в нём есть лого и настраиваем его
-        val logo = if (toolbar.childCount > 2) toolbar.getChildAt(2) as ImageView else null
+        val logo = getLogo()
         logo?.scaleType = ImageView.ScaleType.CENTER_CROP
         val lp = logo?.layoutParams as? Toolbar.LayoutParams
         lp?.let {
@@ -140,4 +176,17 @@ class RootActivity : AppCompatActivity() {
             logo.layoutParams = it
         }
     }
+
+    private fun getLogo(): ImageView? {
+        return if (toolbar.childCount > 2) toolbar.getChildAt(2) as ImageView else null
+    }
+
+    private fun showLogo() {
+        getLogo()?.visibility = VISIBLE
+    }
+
+    private fun hideLogo() {
+        getLogo()?.visibility = GONE
+    }
+
 }
