@@ -25,6 +25,8 @@ import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 class RootActivity : AppCompatActivity() {
 
     private lateinit var viewModel: ArticleViewModel
+    private var searchQuery: String? = null
+    private var isSearching = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,45 +47,82 @@ class RootActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
-        // https://stackoverflow.com/questions/55537368/filter-for-searchview-in-kotlin
-        with(menu!!.findItem(R.id.action_search)) {
-            setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-                override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                    viewModel.handleSearchMode(true)
-                    hideLogo()
-                    return true
-                }
+        val menuItem = menu?.findItem(R.id.action_search)
+        val searchView = (menuItem?.actionView as? SearchView)
+        searchView?.queryHint = getString(R.string.article_search_placeholder)
 
-                override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                    viewModel.handleSearchMode(false)
-                    showLogo()
-                    return true
-                }
-            })
-            if (viewModel.currentState.isSearch) expandActionView() // Если был режим поиска - восстановим
+        //restore SearchView
+        if (isSearching) {
+            menuItem?.expandActionView()
+            searchView?.setQuery(searchQuery, false)
+            searchView?.clearFocus()
         }
 
-        with(menu.findItem(R.id.action_search).actionView as SearchView) {
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    viewModel.handleSearch(query)
-                    return true
-                }
+        menuItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                viewModel.handleSearchMode(true)
+                return true
+            }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    viewModel.handleSearch(newText)
-                    return true
-                }
-            })
-            maxWidth = 9999
-            if (viewModel.currentState.isSearch) setQuery(
-                viewModel.currentState.searchQuery,
-                false
-            ) // Если был режим поиска - восстановим
-        }
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                viewModel.handleSearchMode(false)
+                return true
+            }
+        })
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.handleSearch(query)
+                return true
+            }
 
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.handleSearch(newText)
+                return true
+            }
+        })
 
         return super.onCreateOptionsMenu(menu)
+
+
+//        // https://stackoverflow.com/questions/55537368/filter-for-searchview-in-kotlin
+//        with(menu!!.findItem(R.id.action_search)) {
+//            setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+//                override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+//                    viewModel.handleSearchMode(true)
+//                    hideLogo()
+//                    return true
+//                }
+//
+//                override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+//                    viewModel.handleSearchMode(false)
+//                    showLogo()
+//                    return true
+//                }
+//            })
+//            if (viewModel.currentState.isSearch) expandActionView() // Если был режим поиска - восстановим
+//        }
+//
+//        with(menu.findItem(R.id.action_search).actionView as SearchView) {
+//            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//                override fun onQueryTextSubmit(query: String?): Boolean {
+//                    viewModel.handleSearch(query)
+//                    return true
+//                }
+//
+//                override fun onQueryTextChange(newText: String?): Boolean {
+//                    viewModel.handleSearch(newText)
+//                    return true
+//                }
+//            })
+//            maxWidth = 9999
+//            if (viewModel.currentState.isSearch) setQuery(
+//                viewModel.currentState.searchQuery,
+//                false
+//            ) // Если был режим поиска - восстановим
+//        }
+//
+//
+//        return super.onCreateOptionsMenu(menu)
     }
 
     private fun renderNotification(notify: Notify) {
