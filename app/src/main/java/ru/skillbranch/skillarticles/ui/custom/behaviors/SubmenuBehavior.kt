@@ -8,8 +8,13 @@ import androidx.core.view.marginRight
 import ru.skillbranch.skillarticles.ui.custom.ArticleSubmenu
 import ru.skillbranch.skillarticles.ui.custom.Bottombar
 
-class SubmenuBehavior() : CoordinatorLayout.Behavior<ArticleSubmenu>() {
+class SubmenuBehavior() : CoordinatorLayout.Behavior<ArticleSubmenu>(),
+    CoordinatorLayout.AttachedBehavior {
     constructor(context: Context, attrs: AttributeSet) : this()
+
+    override fun getBehavior(): CoordinatorLayout.Behavior<ArticleSubmenu> {
+        return SubmenuBehavior()
+    }
 
     override fun layoutDependsOn(
         parent: CoordinatorLayout,
@@ -34,4 +39,5 @@ class SubmenuBehavior() : CoordinatorLayout.Behavior<ArticleSubmenu>() {
         val fraction = dependency.translationY / dependency.height
         child.translationX = (child.width + child.marginRight) * fraction
     }
+
 }
