@@ -21,7 +21,7 @@ class Bottombar @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), CoordinatorLayout.AttachedBehavior {
-    private var isSearchMode = false
+    var isSearchMode = false
 
     init {
         View.inflate(context, R.layout.layout_bottombar, this)
