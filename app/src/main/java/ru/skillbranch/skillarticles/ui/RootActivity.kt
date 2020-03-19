@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Selection
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -12,6 +13,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.Space
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -36,8 +38,13 @@ import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     override val layout: Int = R.layout.activity_root
     override lateinit var viewModel: ArticleViewModel
+
     private var searchQuery: String? = null
     private var isSearching = false
+
+    private val bgColor = Color.RED
+    private val fgColor = Color.WHITE
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,8 +63,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     override fun renderSearchResult(searchResult: List<Pair<Int, Int>>) {
         val content = tv_text_content.text as Spannable
-        val bgColor = Color.RED
-        val fgColor = Color.WHITE
+
 
         // clear entry search result
         clearSearchResult()
@@ -67,6 +73,9 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                 SearchSpan(bgColor, fgColor), start, end, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
+
+        // scroll to first searched element
+        renderSearchPosition(0)
     }
 
     override fun renderSearchPosition(searchPosition: Int) {
@@ -211,6 +220,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         if (data.isSearch) showSearchBar() else hideSearchBar()
 
         if (data.searchResults.isNotEmpty()) renderSearchResult(data.searchResults)
+        if (data.searchResults.isNotEmpty()) renderSearchPosition(data.searchPosition)
 
         // bind submenu state
         btn_settings.isChecked = data.isShowMenu
@@ -239,7 +249,10 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         if (data.isLoadingContent) {
             tv_text_content.text = "loading"
         } else if (tv_text_content.text == "loading") {
-            val content
+            val content = data.content.first() as String
+            tv_text_content.setText(content, TextView.BufferType.SPANNABLE)
+            // чтобы могли скролится по нашему текствью
+            tv_text_content.movementMethod = ScrollingMovementMethod()
         }
 
 
