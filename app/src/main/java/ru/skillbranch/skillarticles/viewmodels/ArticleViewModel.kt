@@ -12,7 +12,6 @@ class ArticleViewModel(private val articleId: String) :
     BaseViewModel<ArticleState>(ArticleState()), IArticleViewModel {
     private val repository = ArticleRepository
 
-
     init {
         // subscribe on mutable data
         subscribeOnDataSource(getArticleData()) { article, state ->
@@ -45,7 +44,7 @@ class ArticleViewModel(private val articleId: String) :
             )
         }
 
-        // shared preferences
+        // subscribe on settings (shared preferences)
         subscribeOnDataSource(repository.getAppSettings()) { settings, state ->
             state.copy(
                 isDarkMode = settings.isDarkMode,
