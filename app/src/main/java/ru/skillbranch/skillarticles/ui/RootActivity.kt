@@ -1,15 +1,21 @@
 package ru.skillbranch.skillarticles.ui
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Selection
+import android.text.Spannable
+import android.text.SpannableString
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ImageView
+import android.widget.Space
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.text.getSpans
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
@@ -20,6 +26,8 @@ import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.setMarginOptionally
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
+import ru.skillbranch.skillarticles.ui.custom.SearchFocusSpan
+import ru.skillbranch.skillarticles.ui.custom.SearchSpan
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
@@ -47,15 +55,47 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     }
 
     override fun renderSearchResult(searchResult: List<Pair<Int, Int>>) {
-        TODO("Not yet implemented")
+        val content = tv_text_content.text as Spannable
+        val bgColor = Color.RED
+        val fgColor = Color.WHITE
+
+        // clear entry search result
+        clearSearchResult()
+
+        searchResult.forEach { (start, end) ->
+            content.setSpan(
+                SearchSpan(bgColor, fgColor), start, end, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
     }
 
     override fun renderSearchPosition(searchPosition: Int) {
-        TODO("Not yet implemented")
+        val content = tv_text_content.text as Spannable
+        val bgColor = Color.RED
+        val fgColor = Color.WHITE
+
+        val spans = content.getSpans<SearchSpan>()
+        // clear last search position
+        content.getSpans<SearchFocusSpan>().forEach { content.removeSpan((it)) }
+
+        if (spans.isNotEmpty()) {
+            //find position span
+            val result = spans[searchPosition]
+            Selection.setSelection(content, content.getSpanStart(result))
+            content.setSpan(
+                SearchFocusSpan(bgColor, fgColor),
+                content.getSpanStart(result),
+                content.getSpanEnd(result),
+                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
     }
 
     override fun clearSearchResult() {
-        TODO("Not yet implemented")
+        val content = tv_text_content.text as Spannable
+        content
+            .getSpans<SearchSpan>()
+            .forEach { content.removeSpan(it) }
     }
 
     override fun showSearchBar() {
@@ -170,6 +210,8 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
         if (data.isSearch) showSearchBar() else hideSearchBar()
 
+        if (data.searchResults.isNotEmpty()) renderSearchResult(data.searchResults)
+
         // bind submenu state
         btn_settings.isChecked = data.isShowMenu
         if (data.isShowMenu) submenu.open() else submenu.close()
@@ -194,8 +236,12 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         }
 
         // bind content
-        tv_text_content.text =
-            if (data.isLoadingContent) "loading" else data.content.first() as String
+        if (data.isLoadingContent) {
+            tv_text_content.text = "loading"
+        } else if (tv_text_content.text == "loading") {
+            val content
+        }
+
 
         // bind toolbar
         toolbar.title = data.title ?: "loading"
