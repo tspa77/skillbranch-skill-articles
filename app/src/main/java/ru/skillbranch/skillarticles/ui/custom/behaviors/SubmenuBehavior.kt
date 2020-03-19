@@ -39,5 +39,4 @@ class SubmenuBehavior() : CoordinatorLayout.Behavior<ArticleSubmenu>(),
         val fraction = dependency.translationY / dependency.height
         child.translationX = (child.width + child.marginRight) * fraction
     }
-
 }

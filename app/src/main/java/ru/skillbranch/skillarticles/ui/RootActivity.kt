@@ -26,13 +26,11 @@ import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 class RootActivity : BaseActivity<ArticleViewModel>() {
     override val layout: Int = R.layout.activity_root
     override lateinit var viewModel: ArticleViewModel
-
     private var searchQuery: String? = null
     private var isSearching = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_root)
 
         val vmFactory = ViewModelFactory("0")
         viewModel = ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
@@ -52,13 +50,14 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
         val searchView = (menuItem?.actionView as? SearchView)
         searchView?.queryHint = getString(R.string.article_search_placeholder)
 
-        //restore SearchView
+        // restore SearchView
         if (isSearching) {
-            menuItem?.expandActionView()
+            menuItem?.expandActionView()  // для того чтобы наша вьха расширилась на всю ширину тулбара
             searchView?.setQuery(searchQuery, false)
             searchView?.clearFocus()
         }
 
+        // открытый-закрытый SearchView
         menuItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 viewModel.handleSearchMode(true)
@@ -70,6 +69,8 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
                 return true
             }
         })
+
+        // обработка ввода в поисковую строку
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 viewModel.handleSearch(query)
@@ -83,8 +84,6 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
         })
 
         return super.onCreateOptionsMenu(menu)
-
-
     }
 
     private fun renderNotification(notify: Notify) {
@@ -98,7 +97,7 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
             is Notify.ActionMessage -> {
                 snackbar.setActionTextColor(getColor(android.R.color.white))
                 snackbar.setAction(notify.actionLabel) {
-                    notify.actionHandler?.invoke()
+                    notify.actionHandler.invoke()
                 }
             }
             is Notify.ErrorMessage -> {
@@ -145,18 +144,17 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
 
 
     private fun renderUi(data: ArticleState) {
-
         bottombar.setSearchState(data.isSearch)
 
-        //bind submenu state
+        // bind submenu state
         btn_settings.isChecked = data.isShowMenu
         if (data.isShowMenu) submenu.open() else submenu.close()
 
-        //bind article person data
+        // bind article person data
         btn_like.isChecked = data.isLike
         btn_bookmark.isChecked = data.isBookmark
 
-        //bind submenu views
+        // bind submenu views
         switch_mode.isChecked = data.isDarkMode
         delegate.localNightMode =
             if (data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
@@ -171,11 +169,11 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
             btn_text_down.isChecked = true
         }
 
-        //bind content
+        // bind content
         tv_text_content.text =
             if (data.isLoadingContent) "loading" else data.content.first() as String
 
-        //bind toolbar
+        // bind toolbar
         toolbar.title = data.title ?: "loading"
         toolbar.subtitle = data.category ?: "loading"
         if (data.categoryIcon != null) toolbar.logo = getDrawable(data.categoryIcon as Int)
@@ -199,14 +197,4 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
     private fun getLogo(): ImageView? {
         return if (toolbar.childCount > 2) toolbar.getChildAt(2) as ImageView else null
     }
-
-    private fun showLogo() {
-        getLogo()?.visibility = VISIBLE
-    }
-
-    private fun hideLogo() {
-        getLogo()?.visibility = GONE
-    }
-
-
 }
