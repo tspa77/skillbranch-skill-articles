@@ -1,5 +1,6 @@
 package ru.skillbranch.skillarticles.viewmodels
 
+import android.os.Bundle
 import androidx.lifecycle.LiveData
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
@@ -164,6 +165,7 @@ data class ArticleState(
     val content: List<Any> = emptyList(), //контент
     val reviews: List<Any> = emptyList() //комментарии
 ) : IViewModelState {
+
     override fun save(outState: android.os.Bundle) {
         TODO()
     }
