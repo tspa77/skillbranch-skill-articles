@@ -303,6 +303,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
 
         override fun onFinishInflate() {
+            //TODO dependsOn fields
         }
 
         override fun bind(data: IViewModelState) {
