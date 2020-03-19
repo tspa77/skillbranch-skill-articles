@@ -34,14 +34,14 @@ class Bottombar @JvmOverloads constructor(
         return BottombarBehavior()
     }
 
-    // save state
+    // save state isSearchMode
     override fun onSaveInstanceState(): Parcelable? {
         val savedState = SavedState(super.onSaveInstanceState())
         savedState.ssIsSearchMode = isSearchMode
         return savedState
     }
 
-    // restore state
+    // restore state isSearchMode
     override fun onRestoreInstanceState(state: Parcelable?) {
         super.onRestoreInstanceState(state)
         if (state is SavedState) {

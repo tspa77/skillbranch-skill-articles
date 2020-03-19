@@ -23,7 +23,7 @@ import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
 import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
-class RootActivity : BaseActivity<ArticleViewModel>() {
+class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     override val layout: Int = R.layout.activity_root
     override lateinit var viewModel: ArticleViewModel
     private var searchQuery: String? = null
@@ -42,6 +42,26 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
         setupToolbar()
         setupBottombar()
         setupSubmenu()
+    }
+
+    override fun renderSearchResult(searchResult: List<Pair<Int, Int>>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun renderSearchPosition(searchPosition: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun clearSearchResult() {
+        TODO("Not yet implemented")
+    }
+
+    override fun showSearchBar() {
+        bottombar.setSearchState(true)
+    }
+
+    override fun hideSearchBar() {
+        bottombar.setSearchState(false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -127,7 +147,7 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
         btn_settings.setOnClickListener { viewModel.handleToggleMenu() }
 
         btn_result_up.setOnClickListener {
-            if (search_view.hasFocus()) search_view.clearFocus()
+            if (search_view.hasFocus()) search_view.clearFocus() // очистка фокуса для скрытия клавиатуры
             viewModel.handleUpResult()
         }
 
@@ -141,7 +161,6 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
             invalidateOptionsMenu()
         }
     }
-
 
     private fun renderUi(data: ArticleState) {
         bottombar.setSearchState(data.isSearch)
