@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.viewmodels
 
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
@@ -127,9 +128,8 @@ class ArticleViewModel(private val articleId: String) :
     }
 
     override fun handleSearchMode(isSearch: Boolean) {
-        updateState { it.copy(isSearch = isSearch) }
+        updateState { it.copy(isSearch = isSearch, isShowMenu = false, searchPosition = 0) }
     }
-
 
     override fun handleSearch(query: String?) {
         query ?: return
@@ -145,7 +145,6 @@ class ArticleViewModel(private val articleId: String) :
     fun handleDownResult() {
         updateState { it.copy(searchPosition = it.searchPosition.inc()) }
     }
-
 }
 
 data class ArticleState(
@@ -173,10 +172,22 @@ data class ArticleState(
 ) : IViewModelState {
 
     override fun save(outState: android.os.Bundle) {
-        TODO()
+        outState.putAll(
+            bundleOf(
+                "isSearch" to isSearch,
+                "searchQuery" to searchQuery,
+                "searchResults" to searchResults,
+                "searchPosition" to searchPosition
+            )
+        )
     }
 
     override fun restore(savedState: Bundle): IViewModelState {
-        TODO()
+        return copy(
+            isSearch = savedState["isSearch"] as Boolean,
+            searchQuery = savedState["searchQuery"] as? String,
+            searchResults = savedState["searchResults"] as List<Pair<Int, Int>>,
+            searchPosition = savedState["searchPosition"] as Int
+        )
     }
 }

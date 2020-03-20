@@ -281,6 +281,10 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                     renderSearchResult(sr)
                     renderSearchPosition(sp)
                 }
+                if (!ilc && !iss) {
+                    clearSearchResult()
+                }
+
                 bottombar.bindSearchInfo(sr.size, sp)
             }
         }
