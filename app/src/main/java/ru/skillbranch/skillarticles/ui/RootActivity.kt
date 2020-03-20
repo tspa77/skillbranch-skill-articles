@@ -1,8 +1,5 @@
 package ru.skillbranch.skillarticles.ui
 
-import android.content.BroadcastReceiver
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.text.Selection
 import android.text.Spannable
@@ -12,10 +9,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.text.getSpans
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
@@ -38,6 +37,7 @@ import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
 import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
+
 class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     override val layout: Int = R.layout.activity_root
@@ -45,11 +45,15 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         val vmFactory = ViewModelFactory("0")
         ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
     }
-    override val binding: ArticleBinding by lazy { ArticleBinding() }
 
-    private val bgColor by AttrValue(R.attr.colorSecondary)
-    private val fgColor by AttrValue(R.attr.colorOnSecondary)
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public override val binding: ArticleBinding by lazy { ArticleBinding() }
 
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val bgColor by AttrValue(R.attr.colorSecondary)
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val fgColor by AttrValue(R.attr.colorOnSecondary)
 
     override fun setupViews() {
         setupToolbar()
@@ -59,7 +63,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     override fun renderSearchResult(searchResult: List<Pair<Int, Int>>) {
         val content = tv_text_content.text as Spannable
-
+        tv_text_content.isVisible
         // clear entry search result
         clearSearchResult()
 
@@ -79,7 +83,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         val spans = content.getSpans<SearchSpan>()
         // clear last search position
         content.getSpans<SearchFocusSpan>().forEach { content.removeSpan((it)) }
-
         if (spans.isNotEmpty()) {
             //find position span
             val result = spans[searchPosition]
@@ -157,25 +160,24 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     override fun renderNotification(notify: Notify) {
         val snackbar = Snackbar.make(coordinator_container, notify.message, Snackbar.LENGTH_LONG)
             .setAnchorView(bottombar)
-            .setActionTextColor(getColor(R.color.color_accent_dark))
 
         when (notify) {
-            is Notify.TextMessage -> { /* nothing */
-            }
             is Notify.ActionMessage -> {
-                snackbar.setActionTextColor(getColor(android.R.color.white))
-                snackbar.setAction(notify.actionLabel) {
-                    notify.actionHandler.invoke()
+                val (_, label, handler) = notify
+                with(snackbar) {
+                    setActionTextColor(getColor(R.color.color_accent_dark))
+                    setAction(label) { handler.invoke() }
                 }
             }
+
             is Notify.ErrorMessage -> {
+                val (_, label, handler) = notify
                 with(snackbar) {
                     setBackgroundTint(getColor(R.color.design_default_color_error))
                     setTextColor(getColor(android.R.color.white))
                     setActionTextColor(getColor(android.R.color.white))
-                    setAction(notify.errLabel) {
-                        notify.errHandler?.invoke()
-                    }
+                    handler ?: return@with
+                    setAction(label) { handler.invoke() }
                 }
             }
         }
@@ -214,10 +216,9 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         // проверяем что тулбаер есть и в нём есть лого и настраиваем его
-        val logo = getLogo()
+        val logo = if (toolbar.childCount > 2) toolbar.getChildAt(2) as ImageView else null
         logo?.scaleType = ImageView.ScaleType.CENTER_CROP
-        val lp = logo?.layoutParams as? Toolbar.LayoutParams
-        lp?.let {
+        (logo?.layoutParams as? Toolbar.LayoutParams)?.let {
             it.width = this.dpToIntPx(40)
             it.height = this.dpToIntPx(40)
             it.marginEnd = this.dpToIntPx(16) // Отступ от вью до тайтла
@@ -225,9 +226,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         }
     }
 
-    private fun getLogo(): ImageView? {
-        return if (toolbar.childCount > 2) toolbar.getChildAt(2) as ImageView else null
-    }
+
 
     inner class ArticleBinding() : Binding() {
         var isFocusedSearch: Boolean = false
