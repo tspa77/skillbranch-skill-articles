@@ -26,6 +26,7 @@ import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.custom.SearchFocusSpan
 import ru.skillbranch.skillarticles.ui.custom.SearchSpan
 import ru.skillbranch.skillarticles.ui.delegates.AttrValue
+import ru.skillbranch.skillarticles.ui.delegates.ObserveProp
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
@@ -272,6 +273,9 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     }
 
     inner class ArticleBinding() : Binding() {
+
+        private var isLoadingContent by ObserveProp(true)
+
         // если эти проперти будут изменены, они автоматически будут перерисованы на нашем UI
         private var isLike: Boolean by RenderProp(false) { btn_like.isChecked = it }
         private var isBookmark: Boolean by RenderProp(false) { btn_bookmark.isChecked = it }
