@@ -44,7 +44,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     override val binding: Binding by lazy { ArticleBinding() }
 
     private var searchQuery: String? = null
-    private var isSearching = false
 
     private val bgColor by AttrValue(R.attr.colorSecondary)
     private val fgColor by AttrValue(R.attr.colorOnSecondary)
@@ -305,9 +304,31 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                 if (it) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         }
 
+        var isSearch: Boolean by ObserveProp(false) {
+            if (it) showSearchBar() else hideSearchBar()
+        }
+
+        private var searchResults: List<Pair<Int, Int>> by ObserveProp(emptyList())
+        private var searchPosition: Int by ObserveProp(0)
+
+        private var content: String by ObserveProp("loading") {
+            tv_text_content.setText(it, TextView.BufferType.SPANNABLE)
+            tv_text_content.movementMethod = ScrollingMovementMethod()
+        }
 
         override fun onFinishInflate() {
-            //TODO dependsOn fields
+            dependsOn<Boolean, Boolean, List<Pair<Int, Int>>, Int>(
+                ::isLoadingContent,
+                ::isSearch,
+                ::searchResults,
+                ::searchPosition
+            ) { ilc, iss, sr, sp ->
+                if (!ilc && iss) {
+                    renderSearchResult(sr)
+                    renderSearchPosition(sp)
+                }
+                bottombar.bindSearchInfo(sr.size, sp)
+            }
         }
 
         override fun bind(data: IViewModelState) {
@@ -322,6 +343,12 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             if (data.title != null) title = data.title
             if (data.category != null) category = data.category
             if (data.categoryIcon != null) categoryIcon = data.categoryIcon as Int
+
+            isLoadingContent = data.isLoadingContent
+            isSearch = data.isSearch
+            searchQuery = data.searchQuery
+            searchPosition = data.searchPosition
+            searchResults = data.searchResults
         }
     }
 }
