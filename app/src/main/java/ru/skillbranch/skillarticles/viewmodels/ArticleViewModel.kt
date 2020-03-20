@@ -133,7 +133,8 @@ class ArticleViewModel(private val articleId: String) :
 
     override fun handleSearch(query: String?) {
         query ?: return
-//        val result = (currentState.content.firstOrNull() as? String).indexesOf(query)
+//        val result = (currentState.content.firstOrNull() as? String)
+//            .indexesOf(query)
 //            .map { it to it + query.length }
 //        updateState { it.copy(searchQuery = query, searchResults = result) }
     }
@@ -182,6 +183,7 @@ data class ArticleState(
         )
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun restore(savedState: Bundle): IViewModelState {
         return copy(
             isSearch = savedState["isSearch"] as Boolean,
