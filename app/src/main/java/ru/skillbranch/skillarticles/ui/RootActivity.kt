@@ -227,7 +227,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     }
 
 
-
     inner class ArticleBinding() : Binding() {
         var isFocusedSearch: Boolean = false
         var searchQuery: String? = null
@@ -306,6 +305,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             if (data.title != null) title = data.title
             if (data.category != null) category = data.category
             if (data.categoryIcon != null) categoryIcon = data.categoryIcon as Int
+            if (data.content.isNotEmpty()) content = data.content.first() as String
 
             isLoadingContent = data.isLoadingContent
             isSearch = data.isSearch
