@@ -198,11 +198,13 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
         btn_result_up.setOnClickListener {
             if (search_view.hasFocus()) search_view.clearFocus() // очистка фокуса для скрытия клавиатуры
+            if (tv_text_content.hasFocus()) tv_text_content.requestFocus() // возврат фокуса при перемещениях по элементам поиска
             viewModel.handleUpResult()
         }
 
         btn_result_down.setOnClickListener {
             if (search_view.hasFocus()) search_view.clearFocus()
+            if (tv_text_content.hasFocus()) tv_text_content.requestFocus() // возврат фокуса при перемещениях по элементам поиска
             viewModel.handleDownResult()
         }
 
