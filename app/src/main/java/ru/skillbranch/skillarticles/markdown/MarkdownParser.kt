@@ -52,7 +52,7 @@ object MarkdownParser {
             var text: CharSequence
 
             // groups range for iterate by groups
-            val groups = 1..2
+            val groups = 1..11
             var group = -1
             // цикл чтобы итереироваться по группам
             for (gr in groups) {
@@ -95,6 +95,58 @@ object MarkdownParser {
                     parents.add(element)
                     lastStartIndex = endIndex
                 }
+
+                //QUOTE
+                3 -> {
+                    //text without "> "
+                    //TODO implement me
+                }
+
+                //ITALIC
+                4 -> {
+                    //text without "*{}*"
+                    //TODO implement me
+                }
+
+                //BOLD
+                5 -> {
+                    //text without "**{}**"
+                    //TODO implement me
+                }
+
+                //STRIKE
+                6 -> {
+                    //text without "~~{}~~"
+                    //TODO implement me
+                }
+
+                //RULE
+                7 -> {
+                    //text without "***" insert empty character
+                    //TODO implement me
+                }
+
+                //RULE
+                8 -> {
+                    //text without "`{}`"
+                    //TODO implement me
+                }
+
+                //LINK
+                9 -> {
+                    //full text for regex
+                    //TODO implement me
+                }
+                //10 -> BLOCK CODE - optionally
+                10 -> {
+                    //TODO implement me
+                }
+
+                //11 -> NUMERIC LIST
+                11 -> {
+                    //TODO implement me
+                }
+
             }
         }
 
@@ -129,4 +181,54 @@ sealed class Element() {
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
     ) : Element()
+
+    data class Quote(
+        override val text: CharSequence,
+        override val elements: List<Element> = emptyList()
+    ) : Element()
+
+    data class Italic(
+        override val text: CharSequence,
+        override val elements: List<Element> = emptyList()
+    ) : Element()
+
+    data class Bold(
+        override val text: CharSequence,
+        override val elements: List<Element> = emptyList()
+    ) : Element()
+
+    data class Strike(
+        override val text: CharSequence,
+        override val elements: List<Element> = emptyList()
+    ) : Element()
+
+    data class Rule(
+        override val text: CharSequence = " ", //for insert span
+        override val elements: List<Element> = emptyList()
+    ) : Element()
+
+    data class InlineCode(
+        override val text: CharSequence, //for insert span
+        override val elements: List<Element> = emptyList()
+    ) : Element()
+
+    data class Link(
+        val link: String,
+        override val text: CharSequence, //for insert span
+        override val elements: List<Element> = emptyList()
+    ) : Element()
+
+    data class OrderedListItem(
+        val order: String,
+        override val text: CharSequence,
+        override val elements: List<Element> = emptyList()
+    ) : Element()
+
+    data class BlockCode(
+        val type: Type = Type.MIDDLE,
+        override val text: CharSequence,
+        override val elements: List<Element> = emptyList()
+    ) : Element() {
+        enum class Type { START, END, MIDDLE, SINGLE }
+    }
 }
