@@ -15,14 +15,13 @@ object MarkdownParser {
     private const val STRIKE_GROUP = "((?<!~)~{2}[^~].*?[^~]?~{2}(?!~))"
     private const val RULE_GROUP = "(^[-_*]{3}$)"
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
-    private const val LINK_GROUP = "" //TODO implement me
+    private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.+?\\)|^\\[*?]\\(.*?\\))"
     private const val BLOCK_CODE_GROUP = "" //TODO implement me
     private const val ORDER_LIST_GROUP = "" //TODO implement me
 
     //result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
-            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP"
-//            "|$LINK_GROUP"
+            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP"
     //|$BLOCK_CODE_GROUP|$ORDER_LIST_GROUP optionally
 
     private val elementsPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
@@ -65,7 +64,7 @@ object MarkdownParser {
             var text: CharSequence
 
             // groups range for iterate by groups
-            val groups = 1..8
+            val groups = 1..9
             var group = -1
             // цикл чтобы итереироваться по группам
             for (gr in groups) {
@@ -166,10 +165,16 @@ object MarkdownParser {
                 }
 
                 //LINK
-                9 -> {
+                9 -> {                      // 01:24
                     //full text for regex
-                    //TODO implement me
+                    text = string.subSequence(startIndex, endIndex)
+                    val (title: kotlin.String, link: kotlin.String) = "\\[(.*)]\\((.*)\\)".toRegex()
+                        .find(text)!!.destructured
+                    val element = Element.Link(link, title)
+                    parents.add(element)
+                    lastStartIndex = endIndex
                 }
+
                 //10 -> BLOCK CODE - optionally
                 10 -> {
                     //TODO implement me
