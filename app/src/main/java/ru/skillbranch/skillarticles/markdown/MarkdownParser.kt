@@ -9,7 +9,7 @@ object MarkdownParser {
     private const val UNORDERED_LIST_ITEM_GROUP = "(^[*+-] .+$)"
     private const val HEADER_GROUP = "(^#{1,6} .+?$)"
     private const val QUOTE_GROUP = "(^> .+?$)"
-    private const val ITALIC_GROUP = "" //TODO implement me
+    private const val ITALIC_GROUP = "((?<!\\*)\\*[^*].*?[^*]?\\*(?!\\*)|(?<!_)_[^_].*?[^_]?_(?!_))"
     private const val BOLD_GROUP = "" //TODO implement me
     private const val STRIKE_GROUP = "" //TODO implement me
     private const val RULE_GROUP = "" //TODO implement me
@@ -19,9 +19,9 @@ object MarkdownParser {
     private const val ORDER_LIST_GROUP = "" //TODO implement me
 
     //result regex
-    private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP"
-    //+
-    //        "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP"
+    private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
+            "|$ITALIC_GROUP"
+    //        |$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP"
     //|$BLOCK_CODE_GROUP|$ORDER_LIST_GROUP optionally
 
     private val elementsPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
@@ -64,7 +64,7 @@ object MarkdownParser {
             var text: CharSequence
 
             // groups range for iterate by groups
-            val groups = 1..3
+            val groups = 1..4
             var group = -1
             // цикл чтобы итереироваться по группам
             for (gr in groups) {
@@ -95,7 +95,7 @@ object MarkdownParser {
                 }
 
                 //HEADER
-                2 -> {                  // 01:09:05
+                2 -> {                  // 01:09
                     val reg = "^#{1,6}".toRegex()
                         .find(string.subSequence(startIndex, string.length))
                     val level = reg!!.value.length
@@ -108,7 +108,7 @@ object MarkdownParser {
                 }
 
                 //QUOTE
-                3 -> {
+                3 -> {                  // 01:11
                     //text without "> "
                     text = string.subSequence(startIndex.plus(2), endIndex)
                     val subelements = findElements(text)
@@ -118,9 +118,13 @@ object MarkdownParser {
                 }
 
                 //ITALIC
-                4 -> {
+                4 -> {                  // 01:13
                     //text without "*{}*"
-                    //TODO implement me
+                    text = string.subSequence(startIndex.inc(), endIndex.dec())
+                    val subelements = findElements(text)
+                    val element = Element.Italic(text, subelements)
+                    parents.add(element)
+                    lastStartIndex = endIndex
                 }
 
                 //BOLD
