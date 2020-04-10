@@ -6,7 +6,7 @@ object MarkdownParser {
     private val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
 
     // group regex
-    private const val UNORDERED_LIST_ITEM = ""
+    private const val UNORDERED_LIST_ITEM = "(^[*+-] .+$)"
 
     // result regex
     const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM"
@@ -141,6 +141,11 @@ object MarkdownParser {
 
             }
 
+        }
+
+        if(lastStartIndex<string.length){
+            val text = string.subSequence(lastStartIndex, string.length)
+            parents.add(Element.Text(text))
         }
 
         return parents
