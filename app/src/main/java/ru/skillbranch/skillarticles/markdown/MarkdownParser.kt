@@ -6,10 +6,11 @@ object MarkdownParser {
     private val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
 
     // group regex
-    private const val UNORDERED_LIST_ITEM = "(^[*+-] .+$)"
+    private const val UNORDERED_LIST_ITEM_GROUP = "(^[*+-] .+$)"
+    private const val HEADER_GROUP = "(^#{1,6} .+?$)"
 
     // result regex
-    const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM"
+    const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP"
 
     private val elementsPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
 
@@ -51,7 +52,7 @@ object MarkdownParser {
             var text: CharSequence
 
             // groups range for iterate by groups
-            val groups = 1..1
+            val groups = 1..2
             var group = -1
             // цикл чтобы итереироваться по группам
             for (gr in groups) {
@@ -61,13 +62,14 @@ object MarkdownParser {
                 }
             }
 
-            when (group) {
+            when (group) {              // 01:03:50
                 // NOT FOUND -> BREAK
                 -1 -> break@loop
 
                 //UNORDERED LIST
                 1 -> {
-                    //text without "*. "
+
+                    // text without "*. "
                     text = string.subSequence(startIndex.plus(2), endIndex)
 
                     // find inner elements
@@ -77,73 +79,26 @@ object MarkdownParser {
 
                     // next find start from position "endIndex" (last regex character)
                     lastStartIndex = endIndex
-                    // 01:03:50 - объяснение
 
                 }
 
                 //HEADER
-                2 -> {
-                    //text without "{#} "
-                    //TODO implement me
-                }
+                2 -> {                  // 01:09:05
+                    val reg = "^#{1,6}".toRegex()
+                        .find(string.subSequence(startIndex, string.length))
+                    val level = reg!!.value.length
 
-                //QUOTE
-                3 -> {
-                    //text without "> "
-                    //TODO implement me
-                }
+                    // text without "{#} "
+                    text = string.subSequence(startIndex.plus(level.inc()), endIndex)
 
-                //ITALIC
-                4 -> {
-                    //text without "*{}*"
-                    //TODO implement me
+                    val element = Element.Header(level, text)
+                    parents.add(element)
+                    lastStartIndex = endIndex
                 }
-
-                //BOLD
-                5 -> {
-                    //text without "**{}**"
-                    //TODO implement me
-                }
-
-                //STRIKE
-                6 -> {
-                    //text without "~~{}~~"
-                    //TODO implement me
-                }
-
-                //RULE
-                7 -> {
-                    //text without "***" insert empty character
-                    //TODO implement me
-                }
-
-                //RULE
-                8 -> {
-                    //text without "`{}`"
-                    //TODO implement me
-                }
-
-                //LINK
-                9 -> {
-                    //full text for regex
-                    //TODO implement me
-                }
-                //10 -> BLOCK CODE - optionally
-                10 -> {
-                    //TODO implement me
-                }
-
-                //11 -> NUMERIC LIST
-                11 -> {
-                    //TODO implement me
-                }
-
-
             }
-
         }
 
-        if(lastStartIndex<string.length){
+        if (lastStartIndex < string.length) {
             val text = string.subSequence(lastStartIndex, string.length)
             parents.add(Element.Text(text))
         }
@@ -165,6 +120,12 @@ sealed class Element() {
     ) : Element()
 
     data class UnorderedListItem(
+        override val text: CharSequence,
+        override val elements: List<Element> = emptyList()
+    ) : Element()
+
+    data class Header(
+        val level: Int = 1,
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
     ) : Element()
