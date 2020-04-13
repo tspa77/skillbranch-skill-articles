@@ -44,6 +44,9 @@ class UnorderedListSpan(
         val oldColor = color
         val oldStyle = style
 
+        color = bulletColor
+        style = Paint.Style.FILL
+
         block()
 
         color = oldColor
