@@ -22,6 +22,7 @@ class MarkdownBuilder(context: Context) {
     private val colorSurface = context.attrValue(R.attr.colorSurface)
     private val gap: Float = context.dpToPx(8)
     private val bulletRadius = context.dpToPx(4)
+    private val quoteWidth = context.dpToPx(4)
     private val strikeWidth = context.dpToPx(4)
     private val headerMarginTop = context.dpToPx(12)
     private val headerMarginBottom = context.dpToPx(8)
@@ -42,6 +43,17 @@ class MarkdownBuilder(context: Context) {
                 is Element.Text -> append(element.text)
                 is Element.UnorderedListItem -> {
                     inSpans(UnorderedListSpan(gap, bulletRadius, colorSecondary)) {
+                        for (child in element.elements) {
+                            buildElement(child, builder)
+                        }
+                    }
+                }
+
+                is Element.Quote -> {
+                    inSpans(
+                        UnorderedListSpan(gap, quoteWidth, colorSecondary),
+                        StyleSpan(Typeface.ITALIC)
+                    ) {
                         for (child in element.elements) {
                             buildElement(child, builder)
                         }
