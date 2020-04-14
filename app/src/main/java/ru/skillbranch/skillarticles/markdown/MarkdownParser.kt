@@ -1,5 +1,6 @@
 package ru.skillbranch.skillarticles.markdown
 
+import java.lang.StringBuilder
 import java.util.regex.Pattern
 
 object MarkdownParser {
@@ -40,7 +41,24 @@ object MarkdownParser {
      * clear markdown text to string without markdown characters
      */
     fun clear(string: String?): String? {
-        return null   // TODO
+        string ?: return null
+        val mt = parse(string)
+
+        val stringBuilder = StringBuilder()
+        mt.elements.forEach {
+            stringBuilder.append(getInnerText(it))
+        }
+        return stringBuilder.toString()
+    }
+
+    private fun getInnerText(element: Element): String {
+        var str = ""
+        if (element.elements.isNotEmpty()) {
+            element.elements.forEach {
+                str += getInnerText(it)
+            }
+        } else return element.text.toString()
+        return str
     }
 
     /**
