@@ -39,8 +39,8 @@ object MarkdownParser {
     /**
      * clear markdown text to string without markdown characters
      */
-    fun clear(string: String): String? {
-        return null
+    fun clear(string: String?): String? {
+        return null   // TODO
     }
 
     /**
