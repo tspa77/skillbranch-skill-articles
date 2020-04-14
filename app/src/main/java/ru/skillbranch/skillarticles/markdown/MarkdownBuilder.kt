@@ -74,6 +74,30 @@ class MarkdownBuilder(context: Context) {
                     }
                 }
 
+                is Element.Italic -> {
+                    inSpans(StyleSpan(Typeface.ITALIC)) {
+                        for (child in element.elements) {
+                            buildElement(child, builder)
+                        }
+                    }
+                }
+
+                is Element.Bold -> {
+                    inSpans(StyleSpan(Typeface.BOLD)) {
+                        for (child in element.elements) {
+                            buildElement(child, builder)
+                        }
+                    }
+                }
+
+                is Element.Strike -> {
+                    inSpans(StrikethroughSpan()) {
+                        for (child in element.elements) {
+                            buildElement(child, builder)
+                        }
+                    }
+                }
+
                 else -> append(element.text)
             }
         }
