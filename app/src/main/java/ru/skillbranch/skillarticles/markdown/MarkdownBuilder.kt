@@ -104,6 +104,12 @@ class MarkdownBuilder(context: Context) {
                     }
                 }
 
+                is Element.InlineCode -> {
+                    inSpans(InlineCodeSpan(colorOnSurface, colorSurface, cornerRadius, gap)) {
+                        append(element.text)
+                    }
+                }
+
                 else -> append(element.text)
             }
         }
