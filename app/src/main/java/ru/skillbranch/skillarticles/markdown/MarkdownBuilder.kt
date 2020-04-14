@@ -60,6 +60,20 @@ class MarkdownBuilder(context: Context) {
                     }
                 }
 
+                is Element.Header -> {
+                    inSpans(
+                        HeaderSpan(
+                            element.level,
+                            colorPrimary,
+                            colorDivider,
+                            headerMarginTop,
+                            headerMarginBottom
+                        )
+                    ) {
+                        append(element.text)
+                    }
+                }
+
                 else -> append(element.text)
             }
         }
