@@ -113,13 +113,8 @@ class MarkdownBuilder(context: Context) {
 
                 is Element.Link -> {
                     inSpans(
-                        IconLinkSpan(
-                            linkIcon,
-                            colorSecondary,
-                            gap,
-                            colorPrimary,
-                            strikeWidth
-                        )
+                        IconLinkSpan(linkIcon, colorSecondary, gap, colorPrimary, strikeWidth),
+                        URLSpan(element.link)
                     ) {
                         append(element.text)
                     }
