@@ -98,6 +98,12 @@ class MarkdownBuilder(context: Context) {
                     }
                 }
 
+                is Element.Rule -> {
+                    inSpans(HorizontalRuleSpan(ruleWidth, colorDivider)) {
+                        append(element.text)
+                    }
+                }
+
                 else -> append(element.text)
             }
         }
