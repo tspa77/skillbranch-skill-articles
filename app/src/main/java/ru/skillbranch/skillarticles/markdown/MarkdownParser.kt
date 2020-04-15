@@ -43,22 +43,18 @@ object MarkdownParser {
     fun clear(string: String?): String? {
         string ?: return null
         val mt = parse(string)
-
-        val stringBuilder = StringBuilder()
-        mt.elements.forEach {
-            stringBuilder.append(getInnerText(it))
-        }
-        return stringBuilder.toString()
+        val element = Element.Text("", mt.elements)
+        return getInnerText(element)
     }
 
     private fun getInnerText(element: Element): String {
-        var str = ""
-        if (element.elements.isNotEmpty()) {
-            element.elements.forEach {
-                str += getInnerText(it)
-            }
-        } else return element.text.toString()
-        return str
+        if (element.elements.size <= 1) return element.text.toString()
+
+        val stringBuilder = StringBuilder()
+        element.elements.forEach {
+            stringBuilder.append(getInnerText(it))
+        }
+        return stringBuilder.toString()
     }
 
     /**
