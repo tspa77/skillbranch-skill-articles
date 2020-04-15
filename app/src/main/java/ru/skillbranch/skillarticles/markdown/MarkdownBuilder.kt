@@ -138,7 +138,7 @@ class MarkdownBuilder(context: Context) {
                     }
                 }
 
-                else -> append(element.text)
+//                else -> append(element.text)
             }
         }
     }
