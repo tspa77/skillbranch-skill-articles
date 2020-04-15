@@ -1,4 +1,4 @@
-package ru.skillbranch.skillarticles.markdown
+package ru.skillbranch.skillarticles.data.repositories
 
 import java.lang.StringBuilder
 import java.util.regex.Pattern
@@ -93,7 +93,6 @@ object MarkdownParser {
 
                 //UNORDERED LIST
                 1 -> {
-
                     // text without "*. "
                     text = string.subSequence(startIndex.plus(2), endIndex)
 
