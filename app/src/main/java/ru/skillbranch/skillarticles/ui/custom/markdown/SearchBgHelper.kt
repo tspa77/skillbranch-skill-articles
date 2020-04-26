@@ -99,7 +99,7 @@ class SearchBgHelper(
     private var endOffset = 0
     private var topExtraPadding = 0
     private var bottomExtraPadding = 0
-    private var
+
     fun draw(canvas: Canvas, text: Spanned, layout: Layout) {   // 0:47:37
         spans = text.getSpans()
         spans.forEach {
