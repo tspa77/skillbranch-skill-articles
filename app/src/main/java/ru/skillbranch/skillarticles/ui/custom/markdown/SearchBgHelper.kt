@@ -202,6 +202,9 @@ class MultiLineRender(
     private val drawableMiddle: Drawable,
     private val drawableRight: Drawable
 ) : SearchBgRender(padding) {
+    private var kineEndOffset: Int = 0
+    private var lineTop: Int = 0
+    private var lineBottom: Int = 0
 
     override fun draw(
         canvas: Canvas,
@@ -213,7 +216,12 @@ class MultiLineRender(
         topExtraPadding: Int,
         bottomExtraPadding: Int
     ) {
-        //TODO implement me
+        // draw first line
+        kineEndOffset = (layout.getLineRight(startLine) + padding).toInt()
+        lineTop = getLineTop(layout, startLine)
+        lineBottom = getLineBottom(layout, startLine)
+        drawStart(canvas, startOffset - padding, lineTop, endOffset, lineBottom)
+
     }
 
     private fun drawStart(
@@ -223,7 +231,8 @@ class MultiLineRender(
         end: Int,
         bottom: Int
     ) {
-        //TODO implement me
+        drawableLeft.setBounds(start, top, end, bottom)
+        drawableLeft.draw(canvas)
     }
 
     private fun drawEnd(
@@ -233,6 +242,7 @@ class MultiLineRender(
         end: Int,
         bottom: Int
     ) {
-        //TODO implement me
+        drawableRight.setBounds(start, top, end, bottom)
+        drawableRight.draw(canvas)
     }
 }
