@@ -10,6 +10,8 @@ import android.text.Spanned
 import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.core.graphics.withTranslation
+import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.extensions.attrValue
 
 @SuppressLint("ViewConstructor")
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -21,11 +23,16 @@ class MarkdownTextView constructor(
 
     constructor(context: Context, fontSize: Float) : this(context, fontSize, null)
 
-    override var fontSize: Float
+    override var fontSize: Float = fontSize
+        set(value) {
+            textSize = value
+            field = value
+        }
 
     override val spannableContent: Spannable
+        get() = text as Spannable
 
-    private val color  //colorOnBackground
+    private val color = context.attrValue(R.attr.colorOnBackground)
     private val focusRect = Rect()
 
     private val searchBgHelper = SearchBgHelper(context) { top, bottom ->

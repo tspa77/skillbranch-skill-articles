@@ -51,6 +51,12 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
+    implementation "androidx.preference:preference-ktx:1.1.0"
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
@@ -65,5 +71,6 @@ dependencies {
     androidTestImplementation 'com.jraska.livedata:testing-ktx:1.1.1'
     androidTestImplementation "android.arch.core:core-testing:1.1.1"
 
-    implementation "androidx.preference:preference-ktx:1.1.0"
+    androidTestImplementation 'com.github.tmurakami:dexopener:2.0.4'
+
 }
