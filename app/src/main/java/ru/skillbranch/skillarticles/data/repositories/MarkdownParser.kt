@@ -17,8 +17,9 @@ object MarkdownParser {
     private const val RULE_GROUP = "(^[-_*]{3}$)"
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.+?\\)|^\\[*?]\\(.*?\\))"
-    private const val BLOCK_CODE_GROUP = "(^```[\\s\\S]+?```$)"
-    private const val ORDER_LIST_GROUP = "(^\\d{1,2}\\.\\s.+?$)"
+    private const val BLOCK_CODE_GROUP = "(^```[\\s\\S]+?```$)"         // GROUP 10
+    private const val ORDER_LIST_GROUP = "(^\\d{1,2}\\.\\s.+?$)"        // GROUP 11
+    private const val IMAGE_GROUP = "(^!\\[[^\\[\\]]*?\\]\\(.*?\\)$)"   // GROUP 12
 
     //result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
@@ -187,39 +188,15 @@ object MarkdownParser {
                     lastStartIndex = endIndex
                 }
 
-                //10 -> BLOCK CODE - optionally
+                // 10 -> BLOCK CODE - optionally
                 10 -> {
                     text = string.subSequence(startIndex.plus(3), endIndex.minus(3)).toString()
-
-                    if (text.contains(LINE_SEPARATOR)) {
-                        for ((index, line) in text.lines().withIndex()) {
-                            when (index) {
-                                text.lines().lastIndex -> parents.add(
-                                    Element.BlockCode(
-                                        Element.BlockCode.Type.END,
-                                        line
-                                    )
-                                )
-                                0 -> parents.add(
-                                    Element.BlockCode(
-                                        Element.BlockCode.Type.START,
-                                        line + LINE_SEPARATOR
-                                    )
-                                )
-                                else -> parents.add(
-                                    Element.BlockCode(
-                                        Element.BlockCode.Type.MIDDLE,
-                                        line + LINE_SEPARATOR
-                                    )
-                                )
-                            }
-                        }
-
-                    } else parents.add(Element.BlockCode(Element.BlockCode.Type.SINGLE, text))
+                    val element = Element.BlockCode(text)
+                    parents.add(element)
                     lastStartIndex = endIndex
                 }
 
-                //11 -> NUMERIC LIST
+                // 11 -> NUMERIC LIST
                 11 -> {
                     val reg = "(^\\d{1,2}.)".toRegex().find(string.substring(startIndex, endIndex))
                     val order = reg!!.value
@@ -228,6 +205,17 @@ object MarkdownParser {
 
                     val subs = findElements(text)
                     val element = Element.OrderedListItem(order, text.toString(), subs)
+                    parents.add(element)
+                    lastStartIndex = endIndex
+                }
+
+                // 12 -> IMAGE GROUP
+                12 -> {
+                    text = string.subSequence(startIndex, endIndex)
+                    val (alt, url, title) = "^!\\[([^\\[\\]]*?)?]\\((.*?) \"(.*?)\"\\)$".toRegex()
+                        .find(text)!!.destructured
+
+                    val element = Element.Image(url, alt, title)
                     parents.add(element)
                     lastStartIndex = endIndex
                 }
@@ -310,10 +298,15 @@ sealed class Element() {
     ) : Element()
 
     data class BlockCode(
-        val type: Type = Type.MIDDLE,
         override val text: CharSequence,
         override val elements: List<Element> = emptyList()
-    ) : Element() {
-        enum class Type { START, END, MIDDLE, SINGLE }
-    }
+    ) : Element()
+
+    data class Image(
+        val url: String,
+        val alt: String?,
+        override val text: CharSequence,
+        override val elements: List<Element> = emptyList()
+    ) : Element()
 }
+

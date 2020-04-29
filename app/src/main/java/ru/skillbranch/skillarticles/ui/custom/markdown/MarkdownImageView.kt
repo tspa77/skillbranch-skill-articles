@@ -105,6 +105,7 @@ class MarkdownImageViewOCR private constructor(
         addView(tv_title)
     }
 
+    // делаем альт_описание (для всплывающей подписи к картинке)
     constructor(context: Context, fontSize: Float, url: String, title: CharSequence, alt: String?) :
             this(context, fontSize) {
         imageUrl = url
