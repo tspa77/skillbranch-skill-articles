@@ -235,6 +235,38 @@ object MarkdownParser {
 
 data class MarkdownText(val elements: List<Element>)
 
+sealed class MarkdownElement() {         // 01:40:40
+    abstract val offset: Int
+    val bounds: Pair<Int, Int> by lazy {    // 01:42:30
+        when (this) {
+            is Text -> {
+                val end = elements.fold(offset) { acc, el ->
+                    acc + el.spread().map { it.text.length }.sum()
+                }
+                offset to end
+            }
+
+        }
+    }
+
+    data class Text(
+        val elements: MutableList<Element>,
+        override val offset: Int = 0
+    ) : MarkdownElement()
+
+    data class Image(
+        val image: Element.Image,
+        override val offset: Int = 0
+    ) : MarkdownElement()
+
+    data class Scroll(
+        val blockCode: Element.BlockCode,
+        override val offset: Int = 0
+    ) : MarkdownElement()
+
+
+}
+
 sealed class Element() {
     abstract val text: CharSequence
     abstract val elements: List<Element>
@@ -310,3 +342,24 @@ sealed class Element() {
     ) : Element()
 }
 
+
+private fun Element.spread(): List<Element> {
+    val elements = mutableListOf<Element>()
+    if (this.elements.isNotEmpty()) elements.addAll(this.elements.spread())
+    else elements.add(this)
+    return elements
+}
+
+private fun List<Element>.spread(): List<Element> {
+    val elements = mutableListOf<Element>()
+    forEach { elements.addAll(it.spread()) }
+    return elements
+}
+
+private fun Element.clearContent(): String {
+    return StringBuilder().apply {
+        val element = this@clearContent
+        if (element.elements.isEmpty()) append(element.text)
+        else element.elements.forEach { append((it.clearContent())) }
+    }.toString()
+}
