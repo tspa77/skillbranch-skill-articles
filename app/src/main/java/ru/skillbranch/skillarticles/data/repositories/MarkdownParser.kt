@@ -31,10 +31,30 @@ object MarkdownParser {
     /**
      * parse markdown text to elements
      */
-    fun parse(string: String): MarkdownText {
+    fun parse(string: String): List<MarkdownElement> {
         val elements = mutableListOf<Element>()
         elements.addAll(findElements(string))
-        return MarkdownText(elements)
+        return elements.fold(mutableListOf()) { acc, element ->
+            val last = acc.lastOrNull()
+            when (element) {
+                is Element.Image -> acc.add(
+                    MarkdownElement.Image(element, last?.bounds?.second ?: 0)
+                )
+                is Element.BlockCode -> acc.add(
+                    MarkdownElement.Scroll(element, last?.bounds?.second ?: 0)
+                )
+                else -> {
+                    if (last is MarkdownElement.Text) last.elements.add(element)
+                    else acc.add(
+                        MarkdownElement.Text(
+                            mutableListOf(element),
+                            last?.bounds?.second ?: 0
+                        )
+                    )
+                }
+            }
+            acc
+        }
     }
 
     /**
