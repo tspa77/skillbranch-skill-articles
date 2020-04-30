@@ -245,8 +245,9 @@ sealed class MarkdownElement() {         // 01:40:40
                 }
                 offset to end
             }
-
-        }
+            is Image -> offset to image.text.length + offset
+            is Scroll -> offset to blockCode.text.length + offset
+        } // 1:44:27
     }
 
     data class Text(
