@@ -11,6 +11,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.repositories.Element
+import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
 import ru.skillbranch.skillarticles.data.repositories.MarkdownParser
 import ru.skillbranch.skillarticles.extensions.attrValue    // 1:36:15
 import ru.skillbranch.skillarticles.extensions.dpToPx
@@ -35,10 +36,9 @@ class MarkdownBuilder(context: Context) {
         setTint(colorSecondary)
     }
 
-    fun markdownToSpan(string: String): SpannedString {
-        val markdown = MarkdownParser.parse(string)
+    fun markdownToSpan(textContent: MarkdownElement.Text): SpannedString {
         return buildSpannedString {
-            markdown.elements.forEach { buildElement(it, this) }
+            textContent.elements.forEach { buildElement(it, this) }
         }
     }
 
@@ -110,15 +110,21 @@ class MarkdownBuilder(context: Context) {
                 }
 
                 is Element.InlineCode -> {
-                    inSpans(InlineCodeSpan(colorOnSurface, opacityColorSurface, cornerRadius, gap)) {
+                    inSpans(
+                        InlineCodeSpan(
+                            colorOnSurface,
+                            opacityColorSurface,
+                            cornerRadius,
+                            gap
+                        )
+                    ) {
                         append(element.text)
                     }
                 }
 
-
                 is Element.Link -> {
                     inSpans(
-                        IconLinkSpan(linkIcon,  gap, colorPrimary, strikeWidth),
+                        IconLinkSpan(linkIcon, gap, colorPrimary, strikeWidth),
                         URLSpan(element.link)
                     ) {
                         append(element.text)
@@ -133,17 +139,7 @@ class MarkdownBuilder(context: Context) {
                     }
                 }
 
-                is Element.BlockCode -> {
-                    inSpans(
-                        BlockCodeSpan(
-                            colorOnSurface, colorSurface, cornerRadius, gap, element.type
-                        )
-                    ) {
-                        append(element.text)
-                    }
-                }
-
-//                else -> append(element.text)
+                else -> append(element.text)
             }
         }
     }

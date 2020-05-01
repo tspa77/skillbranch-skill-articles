@@ -12,6 +12,7 @@ import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
 import ru.skillbranch.skillarticles.extensions.indexesOf
 import ru.skillbranch.skillarticles.data.repositories.MarkdownParser
+import ru.skillbranch.skillarticles.data.repositories.clearContent
 import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
@@ -136,7 +137,9 @@ class ArticleViewModel(private val articleId: String) :
 
     override fun handleSearch(query: String?) {
         query ?: return
-        if (clearContent == null && currentState.content.isNotEmpty()) clearContent = currentState.content.clearContent()
+        if (clearContent == null && currentState.content.isNotEmpty()) clearContent =
+            currentState.content.clearContent()
+
         val result = clearContent
             .indexesOf(query)
             .map { it to it + query.length }

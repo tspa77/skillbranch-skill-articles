@@ -26,7 +26,7 @@ import java.security.MessageDigest
 import kotlin.math.hypot
 
 @SuppressLint("ViewConstructor")
-class MarkdownImageViewOCR private constructor(
+class MarkdownImageView private constructor(
     context: Context,
     fontSize: Float
 ) : ViewGroup(context, null, 0), IMarkdownView {
