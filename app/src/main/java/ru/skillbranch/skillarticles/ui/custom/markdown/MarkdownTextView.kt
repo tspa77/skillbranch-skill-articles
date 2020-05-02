@@ -38,15 +38,21 @@ class MarkdownTextView constructor(
     private val focusRect = Rect()
 
     private val searchBgHelper = SearchBgHelper(context) { top, bottom ->
-        focusRect.set(0, top - context.dpToIntPx(56), width, bottom + context.dpToIntPx(56))
-        // show rect on view with animation
+        focusRect.set(
+            0, top - context.dpToIntPx(56),
+            width, bottom + context.dpToIntPx(56)
+        )
+        //  show rect on view with animation
         requestRectangleOnScreen(focusRect, false)
     }
 
 
     init {
         searchBgHelper = mockHelper ?: SearchBgHelper(context) { top, bottom ->
-            focusRect.set(0, top - context.dpToIntPx(56), width, bottom + context.dpToIntPx(56))
+            focusRect.set(
+                0, top - context.dpToIntPx(56),
+                width, bottom + context.dpToIntPx(56)
+            )
             // show rect on view with animation
             requestRectangleOnScreen(focusRect, false)
         }
@@ -57,7 +63,7 @@ class MarkdownTextView constructor(
 
     override fun onDraw(canvas: Canvas) {
         if (text is Spanned && layout != null) {
-            canvas.withTranslation(totalPaddingLeft.toFloat(), totalPaddingRight.toFloat()) {
+            canvas.withTranslation(totalPaddingLeft.toFloat(), totalPaddingTop.toFloat()) {
                 searchBgHelper.draw(canvas, text as Spanned, layout)
             }
         }

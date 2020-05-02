@@ -123,7 +123,8 @@ class MarkdownContentView @JvmOverloads constructor(
         if (searchResult.isEmpty()) return
 
         val bounds = elements.map { it.bounds }
-        val result = searchResult.groupByBounds(bounds)
+        val result = searchResult.groupByBounds(bounds) // 02:06:40!!!
+
         children.forEachIndexed { index, view ->
             view as IMarkdownView
             //search for child with markdown element offset
@@ -131,21 +132,19 @@ class MarkdownContentView @JvmOverloads constructor(
         }
     }
 
-    fun renderSearchPosition(
-        searchposition: Pair<Int, Int>?
-    ) {
-        searchposition ?: return
+    fun renderSearchPosition(searchPosition: Pair<Int, Int>?) {
+        searchPosition ?: return
         val bounds = elements.map { it.bounds }
         val index = bounds.indexOfFirst { (start, end) ->
             val boundRange = start..end
-            val (startPos, endPos) = searchposition
+            val (startPos, endPos) = searchPosition
             startPos in boundRange && endPos in boundRange
         }
 
         if (index == -1) return
         val view = getChildAt(index)
         view as IMarkdownView
-        view.renderSearchPosition(searchposition, elements[index].offset)
+        view.renderSearchPosition(searchPosition, elements[index].offset)
     }
 
     fun clearSearchResult() {
