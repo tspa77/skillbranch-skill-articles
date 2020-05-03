@@ -109,10 +109,8 @@ class SearchBgHelper(
 
             if (it is SearchFocusSpan) {
                 // if search focus invoke listener for focus
-                focusListener.invoke(layout.getLineTop(startLine), layout.getLineBottom(startLine))
+                focusListener?.invoke(layout.getLineTop(startLine), layout.getLineBottom(startLine))
             }
-
-
 
             headerSpans = text.getSpans(spanStart, spanEnd, HeaderSpan::class.java)
 

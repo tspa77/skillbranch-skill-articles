@@ -60,12 +60,12 @@ object MarkdownParser {
     /**
      * clear markdown text to string without markdown characters
      */
-    fun clear(string: String?): String? {
-        string ?: return null
-        val mt = parse(string)
-        val element = Element.Text("", mt.elements)
-        return getInnerText(element)
-    }
+//    fun clear(string: String?): String? {
+//        string ?: return null
+//        val mt = parse(string)
+//        val element = Element.Text("", mt.elements)
+//        return getInnerText(element)
+//    }
 
     private fun getInnerText(element: Element): String {
         if (element.elements.size <= 1) return element.text.toString()
