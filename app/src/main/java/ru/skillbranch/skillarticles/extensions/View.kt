@@ -6,6 +6,7 @@ import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.core.view.marginTop
+import com.google.android.material.internal.ViewUtils
 
 
 fun View.setMarginOptionally(
@@ -25,5 +26,10 @@ fun View.setPaddingOptionally(
     right: Int = paddingRight,
     bottom: Int = paddingBottom
 ) {
+    // ???
     setPadding(left, top, right, bottom)
+}
+
+fun View.setPadding(padding: Int) {
+    setPadding(padding, padding, padding, padding)
 }
