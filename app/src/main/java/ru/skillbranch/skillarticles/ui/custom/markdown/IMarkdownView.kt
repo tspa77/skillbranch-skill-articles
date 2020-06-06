@@ -1,6 +1,5 @@
 package ru.skillbranch.skillarticles.ui.custom.markdown
 
-
 import android.text.Spannable
 import android.text.SpannableString
 import androidx.core.text.getSpans
@@ -17,7 +16,7 @@ interface IMarkdownView {
     ) {
         clearSearchResult()
         val offsetResult = results
-            .map { (start, end) -> start.minus(offset) to end.minus(offset) }
+            .map{(start, end) -> start.minus(offset) to end.minus(offset)}
 
         try {
             offsetResult.forEach { (start, end) ->
@@ -29,13 +28,14 @@ interface IMarkdownView {
                 )
             }
         } catch (e: Exception) {
+
         }
     }
 
     fun renderSearchPosition(
         searchPosition: Pair<Int, Int>,
         offset: Int
-    ) {
+    ){
         spannableContent.getSpans<SearchFocusSpan>().forEach { spannableContent.removeSpan(it) }
 
         spannableContent.setSpan(
@@ -46,7 +46,7 @@ interface IMarkdownView {
         )
     }
 
-    fun clearSearchResult() {
+    fun clearSearchResult(){
         spannableContent.getSpans<SearchSpan>().forEach { spannableContent.removeSpan(it) }
     }
 }

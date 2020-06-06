@@ -1,6 +1,9 @@
 package ru.skillbranch.skillarticles.ui.custom.spans
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.DashPathEffect
+import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.drawable.Drawable
 import android.text.style.ReplacementSpan
 import androidx.annotation.ColorInt
@@ -18,11 +21,9 @@ class IconLinkSpan(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var iconSize = 0
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var textWidth = 0f
     private val dashs = DashPathEffect(floatArrayOf(dotWidth, dotWidth), 0f)
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var path = Path()
 
@@ -45,11 +46,11 @@ class IconLinkSpan(
             canvas.drawPath(path, paint)
         }
 
-        // !!!!!!!!!!! 02:15:11
         canvas.save()
         val trY = y + paint.descent() - linkDrawable.bounds.bottom
         canvas.translate(x + padding/2f, trY)
         linkDrawable.draw(canvas)
+        canvas.restore()
 
         paint.forText {
             canvas.drawText(text, start, end, textStart, y.toFloat(), paint)
@@ -66,7 +67,7 @@ class IconLinkSpan(
     ): Int {
 
         if (fm != null) {
-            iconSize = fm.descent - fm.ascent  // font size
+            iconSize = fm.descent - fm.ascent //fontSize
             linkDrawable.setBounds(0, 0, iconSize, iconSize)
         }
         textWidth = paint.measureText(text.toString(), start, end)
@@ -75,10 +76,9 @@ class IconLinkSpan(
 
 
     private inline fun Paint.forLine(block: () -> Unit) {
-        //                                         02:22:45
         val oldColor = color
         val oldStyle = style
-        val oldWith = strokeWidth
+        val oldWidth = strokeWidth
 
         pathEffect = dashs
         color = textColor
@@ -89,11 +89,10 @@ class IconLinkSpan(
 
         color = oldColor
         style = oldStyle
-        strokeWidth = oldWith
+        strokeWidth = oldWidth
     }
 
     private inline fun Paint.forText(block: () -> Unit) {
-        //                                         02:27:30
         val oldColor = color
 
         color = textColor
@@ -102,4 +101,5 @@ class IconLinkSpan(
 
         color = oldColor
     }
+
 }

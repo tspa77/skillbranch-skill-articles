@@ -21,9 +21,9 @@ class InlineCodeSpan(
 ) : ReplacementSpan() {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var rect: RectF = RectF()
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var measureWidth: Int = 0
+    lateinit var bounds: IntRange
 
     override fun getSize(
         paint: Paint,
@@ -32,6 +32,7 @@ class InlineCodeSpan(
         end: Int,
         fm: Paint.FontMetricsInt?
     ): Int {
+        bounds = start..end
         paint.forText {
             val measureText = paint.measureText(text.toString(), start, end)
             measureWidth = (measureText + 2 * padding).toInt()
@@ -62,7 +63,6 @@ class InlineCodeSpan(
     }
 
     private inline fun Paint.forText(block: () -> Unit) {
-        //                                             2:11:10
         val oldSize = textSize
         val oldStyle = typeface?.style ?: 0
         val oldFont = typeface
@@ -80,7 +80,6 @@ class InlineCodeSpan(
     }
 
     private inline fun Paint.forBackground(block: () -> Unit) {
-        //                                              2:12:
         val oldColor = color
         val oldStyle = style
 
@@ -91,5 +90,13 @@ class InlineCodeSpan(
 
         color = oldColor
         style = oldStyle
+    }
+
+    fun getExtraPadding(spanStart: Int, spanEnd: Int, horizontalPadding: Int) : Pair<Int, Int> {
+        var startPad = 0
+        var endPad = 0
+        if(spanStart != bounds.first) startPad = (padding).toInt() + horizontalPadding
+        if(spanEnd != bounds.last) endPad = -horizontalPadding
+        return startPad to endPad
     }
 }

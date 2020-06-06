@@ -1,10 +1,10 @@
 package ru.skillbranch.skillarticles.ui.custom
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.view.View
 import android.view.ViewAnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -12,7 +12,6 @@ import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.android.synthetic.main.layout_bottombar.view.*
-import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarBehavior
 import kotlin.math.hypot
 
@@ -23,26 +22,25 @@ class Bottombar @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr), CoordinatorLayout.AttachedBehavior {
     var isSearchMode = false
 
+    override fun getBehavior(): CoordinatorLayout.Behavior<Bottombar> {
+        return BottombarBehavior()
+    }
+
     init {
-        View.inflate(context, R.layout.layout_bottombar, this)
         val materialBg = MaterialShapeDrawable.createWithElevationOverlay(context)
         materialBg.elevation = elevation
         background = materialBg
     }
 
-    override fun getBehavior(): CoordinatorLayout.Behavior<*> {
-        return BottombarBehavior()
-    }
-
-    // save state isSearchMode
+    //save state
     override fun onSaveInstanceState(): Parcelable? {
         val savedState = SavedState(super.onSaveInstanceState())
         savedState.ssIsSearchMode = isSearchMode
         return savedState
     }
 
-    // restore state isSearchMode
-    override fun onRestoreInstanceState(state: Parcelable?) {
+    //restore state
+    override fun onRestoreInstanceState(state: Parcelable) {
         super.onRestoreInstanceState(state)
         if (state is SavedState) {
             isSearchMode = state.ssIsSearchMode
@@ -62,7 +60,11 @@ class Bottombar @JvmOverloads constructor(
         group_bottom.isVisible = true
         val endRadius = hypot(width.toFloat(), height / 2f)
         val va = ViewAnimationUtils.createCircularReveal(
-            reveal, width, height / 2, endRadius, 0f
+            reveal,
+            width,
+            height / 2,
+            endRadius,
+            0f
         )
         va.doOnEnd { reveal.isVisible = false }
         va.start()
@@ -72,7 +74,11 @@ class Bottombar @JvmOverloads constructor(
         reveal.isVisible = true
         val endRadius = hypot(width.toFloat(), height / 2f)
         val va = ViewAnimationUtils.createCircularReveal(
-            reveal, width, height / 2, 0f, endRadius
+            reveal,
+            width,
+            height / 2,
+            0f,
+            endRadius
         )
         va.doOnEnd { group_bottom.isVisible = false }
         va.start()
@@ -83,19 +89,26 @@ class Bottombar @JvmOverloads constructor(
             tv_search_result.text = "Not found"
             btn_result_up.isEnabled = false
             btn_result_down.isEnabled = false
-        } else {
+        }else{
             tv_search_result.text = "${position.inc()} of $searchCount"
             btn_result_up.isEnabled = true
             btn_result_down.isEnabled = true
         }
 
-        // lock button presses in min/max positions
-        when (position) {
+        //lock button presses in min/max positions
+        when(position){
             0 -> btn_result_up.isEnabled = false
-            searchCount - 1 -> btn_result_down.isEnabled = false
+            searchCount -1 -> btn_result_down.isEnabled = false
         }
     }
 
+    fun show(){
+        ObjectAnimator.ofFloat(this, "translationY", 0f).start()
+    }
+
+    fun hide(){
+        ObjectAnimator.ofFloat(this, "translationY", height.toFloat()).start()
+    }
 
     private class SavedState : BaseSavedState, Parcelable {
         var ssIsSearchMode: Boolean = false
