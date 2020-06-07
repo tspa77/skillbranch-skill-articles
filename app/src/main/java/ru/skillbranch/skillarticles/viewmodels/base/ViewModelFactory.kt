@@ -1,5 +1,3 @@
-@file:Suppress("UNCHECKED_CAST")
-
 package ru.skillbranch.skillarticles.viewmodels.base
 
 import android.os.Bundle
@@ -15,7 +13,6 @@ class ViewModelFactory(
     defaultArgs: Bundle = bundleOf(),
     private val params: Any
 ) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
-
 
     override fun <T : ViewModel?> create(
         key: String,

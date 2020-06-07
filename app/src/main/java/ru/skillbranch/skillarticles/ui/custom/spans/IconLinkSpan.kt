@@ -1,9 +1,6 @@
 package ru.skillbranch.skillarticles.ui.custom.spans
 
-import android.graphics.Canvas
-import android.graphics.DashPathEffect
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.text.style.ReplacementSpan
 import androidx.annotation.ColorInt
@@ -42,13 +39,13 @@ class IconLinkSpan(
         paint.forLine {
             path.reset()
             path.moveTo(textStart, y + paint.descent())
-            path.lineTo(textStart + textWidth, y + paint.descent())
+            path.lineTo(textStart + textWidth, bottom.toFloat())
             canvas.drawPath(path, paint)
         }
 
         canvas.save()
         val trY = y + paint.descent() - linkDrawable.bounds.bottom
-        canvas.translate(x + padding/2f, trY)
+        canvas.translate(x + padding/2, trY)
         linkDrawable.draw(canvas)
         canvas.restore()
 
@@ -65,10 +62,9 @@ class IconLinkSpan(
         end: Int,
         fm: Paint.FontMetricsInt?
     ): Int {
-
         if (fm != null) {
             iconSize = fm.descent - fm.ascent //fontSize
-            linkDrawable.setBounds(0, 0, iconSize, iconSize)
+            linkDrawable.setBounds(0,0, iconSize, iconSize)
         }
         textWidth = paint.measureText(text.toString(), start, end)
         return (iconSize + padding + textWidth).toInt()
@@ -96,10 +92,8 @@ class IconLinkSpan(
         val oldColor = color
 
         color = textColor
-
         block()
 
         color = oldColor
     }
-
 }
