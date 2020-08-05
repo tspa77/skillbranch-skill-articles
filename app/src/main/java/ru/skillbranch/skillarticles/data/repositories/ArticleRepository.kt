@@ -67,7 +67,7 @@ object ArticleRepository {
                 .takeLast(abs(size))
 
             else -> emptyList()
-        }.apply { sleep(500) }
+        }.apply { sleep(1500) }
     }
 
     fun sendComment(articleId: String, comment: String, answerToSlug: String?) {
